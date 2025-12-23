@@ -57,6 +57,7 @@ resource "aws_iam_user_policy_attachment" "tf_backend" {
   policy_arn = aws_iam_policy.tf_backend.arn
 }
 
+
 #########################
 # Policy for ECR access #
 #########################
