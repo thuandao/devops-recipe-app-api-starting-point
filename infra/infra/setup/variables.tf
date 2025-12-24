@@ -17,3 +17,12 @@ variable "contact" {
   description = "Contact name for tagging resources"
   default     = "mark@example.com"
 }
+
+variable "prefix" {
+  description = "Prefix for resources in AWS"
+  default     = "raa"
+}
+
+locals {
+  prefix = "${var.prefix}"
+}
