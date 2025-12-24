@@ -19,12 +19,6 @@ data "aws_iam_policy_document" "tf_backend" {
     effect    = "Allow"
     actions   = ["s3:ListBucket"]
     resources = ["arn:aws:s3:::${var.tf_state_bucket}"]
-
-    condition {
-      test     = "StringLike"
-      variable = "s3:prefix"
-      values   = ["env:/*"]
-    }
   }
 
   statement {

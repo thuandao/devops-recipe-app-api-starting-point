@@ -9,7 +9,7 @@ terraform {
   backend "s3" {
     bucket         = "devops-recipe-app-tf-state"
     key            = "tf-state-setup"
-    region         = "ap-southeast-2"
+    region         = "us-east-1"
     encrypt        = true
     dynamodb_table = "devops-recipe-app-api-tf-lock"
   }
