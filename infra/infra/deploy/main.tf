@@ -10,7 +10,7 @@ terraform {
     bucket               = "devops-recipe-app-tf-state"
     key                  = "tf-state-deploy"
     workspace_key_prefix = "tf-state-deploy-env"
-    region               = "us-east-1"
+    region               = "ap-southeast-2"
     encrypt              = true
     dynamodb_table       = "devops-recipe-app-api-tf-lock"
   }
