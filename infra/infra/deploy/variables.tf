@@ -12,3 +12,7 @@ variable "contact" {
   description = "Contact email for tagging resources"
   default     = "mark@example.com"
 }
+
+locals {
+  prefix = "${var.prefix}-${terraform.workspace}"
+}
