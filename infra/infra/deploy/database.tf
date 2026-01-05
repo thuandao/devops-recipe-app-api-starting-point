@@ -14,10 +14,6 @@ resource "aws_db_subnet_group" "main" {
   }
 }
 
-resource "aws_iam_service_linked_role" "rds" {
-  aws_service_name = "rds.amazonaws.com"
-}
-
 resource "aws_security_group" "rds" {
   description = "Allow access to the RDS database instance."
   name        = "${local.prefix}-rds-inbound-access"
