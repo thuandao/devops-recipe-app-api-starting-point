@@ -277,6 +277,7 @@ data "aws_iam_policy_document" "logs" {
   }
 }
 
+
 resource "aws_iam_policy" "logs" {
   name        = "${aws_iam_user.cd.name}-logs"
   description = "Allow user to manage CloudWatch resources."
