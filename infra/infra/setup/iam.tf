@@ -138,6 +138,16 @@ data "aws_iam_policy_document" "ec2" {
       "ec2:CreateNetworkInterface",
       "ec2:DeleteNetworkInterface",
       "ec2:ModifyNetworkInterfaceAttribute",
+      # Required for EFS Mount Target / ENI read & refresh
+      "ec2:DescribeNetworkInterfaceAttribute",
+      # Required when AWS auto-assigns private IPs (EFS, ALB, ECS)
+      "ec2:AssignPrivateIpAddresses",
+      "ec2:UnassignPrivateIpAddresses",
+      # Commonly required by Terraform VPC / ALB / EFS modules
+      "ec2:DescribeAvailabilityZones",
+      # Sometimes required when ENI is attached/detached by services
+      "ec2:AttachNetworkInterface",
+      "ec2:DetachNetworkInterface",
     ]
     resources = ["*"]
   }
@@ -344,22 +354,32 @@ data "aws_iam_policy_document" "efs" {
   statement {
     effect = "Allow"
     actions = [
-        "elasticfilesystem:CreateFileSystem",
-        "elasticfilesystem:DeleteFileSystem",
-        "elasticfilesystem:DescribeFileSystems",
-        "elasticfilesystem:DescribeFileSystemPolicy",
-        "elasticfilesystem:CreateMountTarget",
-        "elasticfilesystem:DeleteMountTarget",
-        "elasticfilesystem:DescribeMountTargets",
-        "elasticfilesystem:DescribeMountTargetSecurityGroups",
-        "elasticfilesystem:ModifyMountTargetSecurityGroups",
-        "elasticfilesystem:DescribeLifecycleConfiguration",
-        "elasticfilesystem:PutLifecycleConfiguration",
-        "elasticfilesystem:CreateAccessPoint",
-        "elasticfilesystem:DeleteAccessPoint",
-        "elasticfilesystem:DescribeAccessPoints",
-        "elasticfilesystem:TagResource",
-        "elasticfilesystem:ListTagsForResource"
+        # File system
+      "elasticfilesystem:CreateFileSystem",
+      "elasticfilesystem:DeleteFileSystem",
+      "elasticfilesystem:DescribeFileSystems",
+      "elasticfilesystem:DescribeFileSystemPolicy",
+
+      # Mount targets
+      "elasticfilesystem:CreateMountTarget",
+      "elasticfilesystem:DeleteMountTarget",
+      "elasticfilesystem:DescribeMountTargets",
+      "elasticfilesystem:DescribeMountTargetSecurityGroups",
+      "elasticfilesystem:ModifyMountTargetSecurityGroups",
+
+      # Lifecycle
+      "elasticfilesystem:DescribeLifecycleConfiguration",
+      "elasticfilesystem:PutLifecycleConfiguration",
+
+      # Access points
+      "elasticfilesystem:CreateAccessPoint",
+      "elasticfilesystem:DeleteAccessPoint",
+      "elasticfilesystem:DescribeAccessPoints",
+
+      # Tags
+      "elasticfilesystem:TagResource",
+      "elasticfilesystem:UntagResource",
+      "elasticfilesystem:ListTagsForResource"
     ]
     resources = ["*"]
   }
