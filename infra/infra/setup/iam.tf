@@ -340,18 +340,19 @@ data "aws_iam_policy_document" "efs" {
   statement {
     effect = "Allow"
     actions = [
-      "elasticfilesystem:DescribeFileSystems",
-      "elasticfilesystem:DescribeAccessPoints",
-      "elasticfilesystem:DeleteFileSystem",
-      "elasticfilesystem:DeleteAccessPoint",
-      "elasticfilesystem:DescribeMountTargets",
-      "elasticfilesystem:DeleteMountTarget",
-      "elasticfilesystem:DescribeMountTargetSecurityGroups",
-      "elasticfilesystem:DescribeLifecycleConfiguration",
-      "elasticfilesystem:CreateMountTarget",
-      "elasticfilesystem:CreateAccessPoint",
-      "elasticfilesystem:CreateFileSystem",
-      "elasticfilesystem:TagResource",
+       "elasticfilesystem:CreateFileSystem",
+        "elasticfilesystem:DeleteFileSystem",
+        "elasticfilesystem:DescribeFileSystems",
+        "elasticfilesystem:CreateMountTarget",
+        "elasticfilesystem:DeleteMountTarget",
+        "elasticfilesystem:DescribeMountTargets",
+        "elasticfilesystem:DescribeMountTargetSecurityGroups",
+        "elasticfilesystem:ModifyMountTargetSecurityGroups",
+        "elasticfilesystem:CreateAccessPoint",
+        "elasticfilesystem:DeleteAccessPoint",
+        "elasticfilesystem:DescribeAccessPoints",
+        "elasticfilesystem:TagResource",
+        "elasticfilesystem:ListTagsForResource"
     ]
     resources = ["*"]
   }
