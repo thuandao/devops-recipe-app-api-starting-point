@@ -348,6 +348,8 @@ data "aws_iam_policy_document" "efs" {
         "elasticfilesystem:DescribeMountTargets",
         "elasticfilesystem:DescribeMountTargetSecurityGroups",
         "elasticfilesystem:ModifyMountTargetSecurityGroups",
+        "elasticfilesystem:DescribeLifecycleConfiguration",
+        "elasticfilesystem:PutLifecycleConfiguration",
         "elasticfilesystem:CreateAccessPoint",
         "elasticfilesystem:DeleteAccessPoint",
         "elasticfilesystem:DescribeAccessPoints",
