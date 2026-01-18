@@ -23,3 +23,4 @@ resource "aws_ecr_repository" "proxy" {
     scan_on_push = false
   }
 }
+
