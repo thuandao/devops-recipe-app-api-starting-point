@@ -347,6 +347,7 @@ data "aws_iam_policy_document" "efs" {
         "elasticfilesystem:CreateFileSystem",
         "elasticfilesystem:DeleteFileSystem",
         "elasticfilesystem:DescribeFileSystems",
+        "elasticfilesystem:DescribeFileSystemPolicy",
         "elasticfilesystem:CreateMountTarget",
         "elasticfilesystem:DeleteMountTarget",
         "elasticfilesystem:DescribeMountTargets",
