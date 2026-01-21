@@ -265,7 +265,17 @@ data "aws_iam_policy_document" "iam" {
       "iam:AddRoleToInstanceProfile",
       "iam:RemoveRoleFromInstanceProfile",
       "iam:TagInstanceProfile",
-      "iam:UntagInstanceProfile"
+      "iam:UntagInstanceProfile",
+      "ec2:RunInstances",
+      "ec2:CreateTags",
+      "ec2:DescribeInstances",
+      "ec2:DescribeImages",
+      "ec2:DescribeKeyPairs",
+      "ec2:DescribeSecurityGroups",
+      "ec2:DescribeSubnets",
+      "ec2:DescribeVpcs",
+      "ec2:DescribeInstanceAttribute",
+      "ec2:DescribeAvailabilityZones"
     ]
     resources = ["*"]
   }
