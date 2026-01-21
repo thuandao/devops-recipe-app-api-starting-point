@@ -103,6 +103,7 @@ data "aws_iam_policy_document" "ec2" {
       "ec2:CreateVpc",
       "ec2:DeleteVpc",
       "ec2:DescribeSecurityGroups",
+      "ec2:DescribeImages",
       "ec2:DeleteSubnet",
       "ec2:DeleteSecurityGroup",
       "ec2:DescribeNetworkInterfaces",
