@@ -11,8 +11,10 @@ data "aws_ami" "amazon_linux" {
 resource "aws_iam_role" "bastion" {
   name               = "${local.prefix}-bastion"
   assume_role_policy = file("./templates/bastion/instance-profile-policy.json")
-  
-  tags = "${local.prefix}-bastion_aws_iam_role"
+
+  tags = {
+    Name = "${local.prefix}-bastion_aws_iam_role"
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "bastion_attach_policy" {
@@ -37,7 +39,9 @@ resource "aws_instance" "bastion" {
     aws_security_group.bastion.id
   ]
 
-  tags = "${local.prefix}-bastion"
+  tags = {
+    Name = "${local.prefix}-bastion-instance"
+  }
 }
 
 resource "aws_security_group" "bastion" {
@@ -76,5 +80,7 @@ resource "aws_security_group" "bastion" {
     ]
   }
 
-  tags = "${local.prefix}-bastion"
+  tags = {
+    Name = "${local.prefix}-bastion"
+  }
 }
