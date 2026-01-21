@@ -263,7 +263,9 @@ data "aws_iam_policy_document" "iam" {
       "iam:DeleteInstanceProfile",
       "iam:GetInstanceProfile",
       "iam:AddRoleToInstanceProfile",
-      "iam:RemoveRoleFromInstanceProfile"
+      "iam:RemoveRoleFromInstanceProfile",
+      "iam:TagInstanceProfile",
+      "iam:UntagInstanceProfile"
     ]
     resources = ["*"]
   }
