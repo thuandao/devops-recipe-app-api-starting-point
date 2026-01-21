@@ -150,6 +150,7 @@ data "aws_iam_policy_document" "ec2" {
       "ec2:AttachNetworkInterface",
       "ec2:DetachNetworkInterface",
       "ec2:RunInstances",
+      "ec2:TerminateInstances",
       "ec2:CreateTags",
       "ec2:Describe*",
     ]
