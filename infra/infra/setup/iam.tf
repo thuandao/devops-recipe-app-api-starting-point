@@ -271,7 +271,6 @@ data "aws_iam_policy_document" "iam" {
   }
 }
 
-
 resource "aws_iam_policy" "iam" {
   name        = "${aws_iam_user.cd.name}-iam"
   description = "Allow user to manage IAM resources."
