@@ -3,5 +3,5 @@ output "api_endpoint" {
 }
 
 output "bastion_host" {
-  value = aws_instance.bastion.public_dns
+  value = aws_eip.bastion.public_dns
 }
