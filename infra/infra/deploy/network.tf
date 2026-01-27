@@ -105,6 +105,7 @@ resource "aws_subnet" "private_b" {
   tags = {
     Name = "${local.prefix}-private-b"
   }
+  
 }
 
 #########################################################################
