@@ -153,6 +153,11 @@ data "aws_iam_policy_document" "ec2" {
       "ec2:TerminateInstances",
       "ec2:CreateTags",
       "ec2:Describe*",
+      "ec2:CreateLaunchTemplate",
+      "ec2:CreateLaunchTemplateVersion",
+      "ec2:DescribeLaunchTemplates",
+      "ec2:DescribeLaunchTemplateVersions",
+      "ec2:DeleteLaunchTemplate",
     ]
     resources = ["*"]
   }
