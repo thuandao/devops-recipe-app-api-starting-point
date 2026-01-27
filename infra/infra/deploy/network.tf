@@ -121,6 +121,7 @@ resource "aws_security_group" "endpoint_access" {
     to_port     = 443
     protocol    = "tcp"
   }
+  
 }
 
 resource "aws_vpc_endpoint" "ecr" {
@@ -201,5 +202,5 @@ resource "aws_vpc_endpoint" "s3" {
   tags = {
     Name = "${local.prefix}-s3-endpoint"
   }
-  
+
 }
