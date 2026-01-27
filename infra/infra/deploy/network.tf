@@ -201,4 +201,5 @@ resource "aws_vpc_endpoint" "s3" {
   tags = {
     Name = "${local.prefix}-s3-endpoint"
   }
+  
 }
