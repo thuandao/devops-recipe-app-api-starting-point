@@ -6,7 +6,7 @@
 resource "aws_security_group" "lb" {
   description = "Configure access for the Application Load Balancer"
   name        = "${local.prefix}-alb-access"
-  vpc_id      = aws_vpc.main.id
+  vpc_id      = module.vpc.vpc_id
 
   ingress {
     protocol    = "tcp"
@@ -41,7 +41,7 @@ resource "aws_lb" "api" {
 resource "aws_lb_target_group" "api" {
   name        = "${local.prefix}-api"
   protocol    = "HTTP"
-  vpc_id      = aws_vpc.main.id
+  vpc_id      = module.vpc.vpc_id
   target_type = "ip"
   port        = 8000
 

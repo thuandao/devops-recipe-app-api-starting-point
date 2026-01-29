@@ -40,7 +40,7 @@ resource "aws_launch_template" "bastion" {
   network_interfaces {
     associate_public_ip_address = true
     security_groups             = [aws_security_group.bastion.id]
-    subnet_id                   = aws_subnet.public_a.id
+    subnet_id                   = module.vpc.public_subnets[0]
   }
 
   user_data = base64encode(
@@ -60,7 +60,7 @@ resource "aws_autoscaling_group" "bastion" {
   min_size            = 1
   max_size            = 1
   desired_capacity    = 1
-  vpc_zone_identifier = [aws_subnet.public_a.id]
+  vpc_zone_identifier = [module.vpc.public_subnets[0]]
 
   launch_template {
     id      = aws_launch_template.bastion.id
@@ -80,7 +80,7 @@ resource "aws_autoscaling_group" "bastion" {
 resource "aws_security_group" "bastion" {
   description = "Control bastion inbound and outbound access"
   name        = "${local.prefix}-bastion"
-  vpc_id      = aws_vpc.main.id
+  vpc_id      = module.vpc.vpc_id
 
   ingress {
     protocol    = "tcp"
@@ -107,10 +107,7 @@ resource "aws_security_group" "bastion" {
     from_port = 5432
     to_port   = 5432
     protocol  = "tcp"
-    cidr_blocks = [
-      aws_subnet.private_a.cidr_block,
-      aws_subnet.private_b.cidr_block,
-    ]
+    cidr_blocks = module.vpc.private_subnets_cidr_blocks
   }
 
   tags = {
