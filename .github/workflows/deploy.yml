@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - prod
+      - stg_network_module
 
 jobs:
   test-lint:
