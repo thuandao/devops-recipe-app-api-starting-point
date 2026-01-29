@@ -20,7 +20,6 @@ resource "aws_security_group" "endpoint_access" {
 
 module "vpc_endpoints" {
   source  = "terraform-aws-modules/vpc/aws//modules/vpc-endpoints"
-  version = "~> 5.0"
 
   vpc_id = module.vpc.vpc_id
 
