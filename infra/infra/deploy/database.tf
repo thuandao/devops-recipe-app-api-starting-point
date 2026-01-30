@@ -4,10 +4,7 @@
 
 resource "aws_db_subnet_group" "main" {
   name = "${local.prefix}-main"
-  subnet_ids = [
-    aws_subnet.private_a.id,
-    aws_subnet.private_b.id
-  ]
+  subnet_ids = module.vpc.private_subnets
 
   tags = {
     Name = "${local.prefix}-db-subnet-group"
@@ -17,7 +14,7 @@ resource "aws_db_subnet_group" "main" {
 resource "aws_security_group" "rds" {
   description = "Allow access to the RDS database instance."
   name        = "${local.prefix}-rds-inbound-access"
-  vpc_id      = aws_vpc.main.id
+  vpc_id      = module.vpc.vpc_id
 
   ingress {
     protocol  = "tcp"

@@ -33,10 +33,9 @@ resource "aws_security_group" "lb" {
 resource "aws_lb" "api" {
   name               = "${local.prefix}-lb"
   load_balancer_type = "application"
-  subnets            = [aws_subnet.public_a.id, aws_subnet.public_b.id]
+  subnets            = module.vpc.public_subnets
   security_groups    = [aws_security_group.lb.id]
 }
-
 
 resource "aws_lb_target_group" "api" {
   name        = "${local.prefix}-api"
