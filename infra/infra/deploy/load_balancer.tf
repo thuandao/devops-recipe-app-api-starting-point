@@ -66,6 +66,7 @@ resource "aws_lb_listener" "api" {
   }
 }
 
+
 resource "aws_lb_listener" "api_https" {
   load_balancer_arn = aws_lb.api.arn
   port              = 443
