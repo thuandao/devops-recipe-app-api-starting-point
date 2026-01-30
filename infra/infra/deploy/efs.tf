@@ -11,7 +11,7 @@ resource "aws_efs_file_system" "media" {
 
 resource "aws_security_group" "efs" {
   name   = "${local.prefix}-efs"
-  vpc_id = aws_vpc.main.id
+  vpc_id = module.vpc.vpc_id
 
   ingress {
     from_port = 2049
