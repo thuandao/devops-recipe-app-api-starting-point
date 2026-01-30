@@ -12,7 +12,7 @@ resource "aws_route53_record" "app" {
 }
 
 resource "aws_acm_certificate" "cert" {
-  domain_name       = aws_route53_record.app.name
+  domain_name       = trimsuffix(aws_route53_record.app.fqdn, ".")
   validation_method = "DNS"
 
   lifecycle {
