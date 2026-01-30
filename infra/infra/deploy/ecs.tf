@@ -64,23 +64,23 @@ resource "aws_ecs_task_definition" "api" {
         environment = [
           {
             name  = "DJANGO_SECRET_KEY"
-            value = var.django_secret_key
+            valueFrom = "${aws_secretsmanager_secret.db.arn}:django_secret_key::"
           },
           {
             name  = "DB_HOST"
-            value = aws_db_instance.main.address
+            valueFrom = "${aws_secretsmanager_secret.db.arn}:db_host::"
           },
           {
             name  = "DB_NAME"
-            value = aws_db_instance.main.db_name
+            valueFrom = "${aws_secretsmanager_secret.db.arn}:db_name::"
           },
           {
             name  = "DB_USER"
-            value = aws_db_instance.main.username
+            valueFrom = "${aws_secretsmanager_secret.db.arn}:username::"
           },
           {
             name  = "DB_PASS"
-            value = aws_db_instance.main.password
+            valueFrom = "${aws_secretsmanager_secret.db.arn}:password::"
           },
           {
             name  = "ALLOWED_HOSTS"
