@@ -303,7 +303,9 @@ data "aws_iam_policy_document" "logs" {
       "logs:DescribeLogGroups",
       "logs:CreateLogGroup",
       "logs:TagResource",
-      "logs:ListTagsLogGroup"
+      "logs:ListTagsLogGroup",
+      "logs:ListTagsForResource",
+      "logs:UntagResource"
     ]
     resources = ["*"]
   }
@@ -329,6 +331,8 @@ data "aws_iam_policy_document" "elb" {
   statement {
     effect = "Allow"
     actions = [
+      "elasticloadbalancing:DescribeListenerAttributes",
+      "elasticloadbalancing:RemoveTags",
       "elasticloadbalancing:DeleteLoadBalancer",
       "elasticloadbalancing:DeleteTargetGroup",
       "elasticloadbalancing:DeleteListener",
