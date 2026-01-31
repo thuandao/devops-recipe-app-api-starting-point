@@ -12,7 +12,7 @@ resource "aws_route53_record" "app" {
 }
 
 resource "aws_acm_certificate" "cert" {
-  domain_name       = trimsuffix(aws_route53_record.app.fqdn, ".")
+  domain_name       = "${lookup(var.subdomain, terraform.workspace)}.${data.aws_route53_zone.zone.name}"
   validation_method = "DNS"
 
   lifecycle {
