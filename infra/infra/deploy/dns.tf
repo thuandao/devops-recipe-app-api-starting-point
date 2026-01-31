@@ -37,6 +37,7 @@ resource "aws_route53_record" "cert_validation" {
   zone_id         = data.aws_route53_zone.zone.zone_id
 }
 
+
 resource "aws_acm_certificate_validation" "cert" {
   certificate_arn         = aws_acm_certificate.cert.arn
   validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
