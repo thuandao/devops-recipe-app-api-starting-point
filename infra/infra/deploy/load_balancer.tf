@@ -72,7 +72,7 @@ resource "aws_lb_listener" "api_https" {
   port              = 443
   protocol          = "HTTPS"
 
-  certificate_arn = aws_acm_certificate_validation.cert.certificate_arn
+  certificate_arn = module.acm.acm_certificate_arn
 
   default_action {
     type             = "forward"

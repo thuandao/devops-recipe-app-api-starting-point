@@ -2,27 +2,20 @@ data "aws_route53_zone" "zone" {
   name = "${var.dns_zone_name}."
 }
 
-module "app_dns" {
-  source  = "terraform-aws-modules/route53/aws//modules/records"
-  version = "~> 2.0"
-
+resource "aws_route53_record" "app" {
   zone_id = data.aws_route53_zone.zone.zone_id
+  name    = "${lookup(var.subdomain, terraform.workspace)}.${data.aws_route53_zone.zone.name}"
+  type    = "CNAME"
+  ttl     = "300"
 
-  records = [
-    {
-      name = lookup(var.subdomain, terraform.workspace)
-      type = "CNAME"
-      ttl  = 300
-      records = [aws_lb.api.dns_name]
-    }
-  ]
+  records = [aws_lb.api.dns_name]
 }
 
 module "acm" {
   source  = "terraform-aws-modules/acm/aws"
   version = "~> 4.0"
 
-  domain_name = trimsuffix("${lookup(var.subdomain, terraform.workspace)}.${data.aws_route53_zone.zone.name}", ".")
+  domain_name = aws_route53_record.app.name
 
   zone_id = data.aws_route53_zone.zone.zone_id
 
