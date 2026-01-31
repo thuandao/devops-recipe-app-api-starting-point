@@ -55,13 +55,13 @@ resource "aws_ecs_task_definition" "api" {
 
     container_definitions = jsonencode(
     [
-         {
+      {
         name              = "api"
         image             = var.ecr_app_image
         essential         = true
         memoryReservation = 256
         user              = "django-user"
-        environment = [
+        secrets = [
           {
             name  = "DJANGO_SECRET_KEY"
             valueFrom = "${aws_secretsmanager_secret.db.arn}:django_secret_key::"
@@ -81,10 +81,17 @@ resource "aws_ecs_task_definition" "api" {
           {
             name  = "DB_PASS"
             valueFrom = "${aws_secretsmanager_secret.db.arn}:password::"
-          },
+          }
+        ]
+        environment = [
           {
             name  = "ALLOWED_HOSTS"
             value = aws_route53_record.app.fqdn
+          }
+        ]
+        portMappings = [
+          {
+            containerPort = 8000
           }
         ]
         mountPoints = [
