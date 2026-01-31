@@ -98,6 +98,12 @@ data "aws_iam_policy_document" "ec2" {
   statement {
     effect = "Allow"
     actions = [
+      "ec2:CreateNetworkAcl",
+      "ec2:DeleteNetworkAcl",
+      "ec2:CreateNetworkAclEntry",
+      "ec2:DeleteNetworkAclEntry",
+      "ec2:ReplaceNetworkAclEntry",
+      "ec2:DescribeNetworkAcls",
       "ec2:DescribeVpcs",
       "ec2:CreateTags",
       "ec2:CreateVpc",
