@@ -145,14 +145,10 @@ data "aws_iam_policy_document" "ec2" {
       "ec2:CreateNetworkInterface",
       "ec2:DeleteNetworkInterface",
       "ec2:ModifyNetworkInterfaceAttribute",
-      # Required for EFS Mount Target / ENI read & refresh
       "ec2:DescribeNetworkInterfaceAttribute",
-      # Required when AWS auto-assigns private IPs (EFS, ALB, ECS)
       "ec2:AssignPrivateIpAddresses",
       "ec2:UnassignPrivateIpAddresses",
-      # Commonly required by Terraform VPC / ALB / EFS modules
       "ec2:DescribeAvailabilityZones",
-      # Sometimes required when ENI is attached/detached by services
       "ec2:AttachNetworkInterface",
       "ec2:DetachNetworkInterface",
       "ec2:RunInstances",
