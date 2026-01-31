@@ -267,6 +267,8 @@ data "aws_iam_policy_document" "iam" {
       "iam:CreateRole",
       "iam:CreatePolicy",
       "iam:AttachRolePolicy",
+      "iam:CreatePolicyVersion",
+      "iam:DeletePolicyVersion",
       "iam:TagRole",
       "iam:TagPolicy",
       "iam:PassRole",
