@@ -89,11 +89,6 @@ resource "aws_ecs_task_definition" "api" {
             value = aws_route53_record.app.fqdn
           }
         ]
-        portMappings = [
-          {
-            containerPort = 8000
-          }
-        ]
         mountPoints = [
           {
             readOnly      = false
