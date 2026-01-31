@@ -228,6 +228,7 @@ resource "aws_ecs_service" "api" {
   launch_type            = "FARGATE"
   platform_version       = "1.4.0"
   enable_execute_command = true
+  force_new_deployment = true
 
   network_configuration {
     assign_public_ip = true
