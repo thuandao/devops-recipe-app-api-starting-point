@@ -62,6 +62,14 @@ module "vpc_endpoints" {
       }
     }
 
+    secretsmanager = {
+      service = "secretsmanager"
+      private_dns_enabled = true
+      tags = {
+        Name = "${local.prefix}-secretsmanager-endpoint"
+      }
+    }
+
     s3 = {
       service = "s3"
       service_type = "Gateway"
