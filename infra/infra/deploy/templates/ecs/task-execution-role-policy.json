@@ -12,6 +12,14 @@
           "logs:PutLogEvents"
         ],
         "Resource": "*"
+      },
+      {
+        "Effect": "Allow",
+        "Action": [
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret"
+        ],
+        "Resource": "arn:aws:secretsmanager:us-east-1:842990485643:secret:raa-staging-db-credentials*"
       }
     ]
 }
