@@ -4,9 +4,6 @@ name: Deploy
 on:
   push:
     branches:
-      - main
-      - prod
-      - stg_network_module
       - stg_add_secret
 
 jobs:
