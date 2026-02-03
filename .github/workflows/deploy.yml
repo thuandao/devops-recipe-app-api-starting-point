@@ -55,4 +55,4 @@ jobs:
           cd infra/infra
           docker compose run --rm terraform -chdir=deploy/ init -reconfigure
           docker compose run --rm terraform -chdir=deploy/ workspace select -or-create $workspace
-          docker compose run --rm terraform -chdir=deploy/ apply -auto-approve
+          docker compose run --rm terraform -chdir=deploy/ destroy -auto-approve
