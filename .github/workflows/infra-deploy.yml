@@ -42,21 +42,7 @@ jobs:
           cd infra/infra
           docker compose run --rm terraform -chdir=deploy init -reconfigure
           docker compose run --rm terraform -chdir=deploy workspace select -or-create $workspace
-
-      - name: Terraform Plan
-        env:
-          AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: |
-          cd infra/infra
           docker compose run --rm terraform -chdir=deploy plan
-
-      - name: Terraform Apply
-        env:
-          AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: |
-          cd infra/infra
           docker compose run --rm terraform -chdir=deploy apply -auto-approve
 
       - name: Get ECS names
