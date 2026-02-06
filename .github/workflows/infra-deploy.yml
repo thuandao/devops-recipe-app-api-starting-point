@@ -3,7 +3,7 @@ name: Deploy Infrastructure
 on:
   push:
     branches:
-      - main
+      - staging
       - prod
       - change_deploy_flows
     paths:
