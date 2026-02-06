@@ -152,6 +152,12 @@ resource "aws_ecs_task_definition" "api" {
     ]
   )
 
+  lifecycle {
+    ignore_changes = [
+      container_definitions
+    ]
+  }
+
   volume {
     name = "static"
   }
@@ -223,7 +229,13 @@ resource "aws_ecs_service" "api" {
   launch_type            = "FARGATE"
   platform_version       = "1.4.0"
   enable_execute_command = true
-  force_new_deployment = true
+
+  deployment_controller {
+    type = "ECS"
+  }
+
+  deployment_minimum_healthy_percent = 100
+  deployment_maximum_percent         = 200
 
   network_configuration {
     assign_public_ip = true

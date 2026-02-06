@@ -1,0 +1,97 @@
+name: Deploy App (Rolling ECS)
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        description: Which environment to deploy AWS resources for?
+        options:
+          - staging
+          - prod
+
+jobs:
+  deploy:
+    name: Build & Rolling Deploy
+    runs-on: ubuntu-22.04
+ 
+    env:
+      AWS_REGION: us-east-1
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 🔐 AWS Login
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ vars.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # 🐳 Login ECR
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # 🏗️ Build & Push images
+      - name: Build and Push Images
+        run: |
+          IMAGE_APP=${{ vars.ECR_REPO_APP }}:$GITHUB_SHA
+          IMAGE_PROXY=${{ vars.ECR_REPO_PROXY }}:$GITHUB_SHA
+
+          docker build -t $IMAGE_APP .
+          docker push $IMAGE_APP
+
+          docker build -t $IMAGE_PROXY proxy/
+          docker push $IMAGE_PROXY
+
+          echo "IMAGE_APP=$IMAGE_APP" >> $GITHUB_ENV
+          echo "IMAGE_PROXY=$IMAGE_PROXY" >> $GITHUB_ENV
+
+      # 📦 Lấy task definition hiện tại & tạo revision mới
+      - name: Register new Task Definition revision
+        run: |
+          aws ecs describe-task-definition \
+            --task-definition my-task \
+            --query taskDefinition > task-def.json
+
+          jq --arg IMG1 "$IMAGE_APP" --arg IMG2 "$IMAGE_PROXY" '
+            .containerDefinitions |= map(
+              if .name=="api" then .image=$IMG1
+              elif .name=="proxy" then .image=$IMG2
+              else .
+              end
+            )
+            | del(
+                .taskDefinitionArn,
+                .revision,
+                .status,
+                .requiresAttributes,
+                .compatibilities,
+                .registeredAt,
+                .registeredBy
+              )
+          ' task-def.json > new-task-def.json
+
+          NEW_TASK_DEF=$(aws ecs register-task-definition \
+            --cli-input-json file://new-task-def.json \
+            --query 'taskDefinition.taskDefinitionArn' \
+            --output text)
+
+          echo "TASK_DEF_ARN=$NEW_TASK_DEF" >> $GITHUB_ENV
+          echo "New task definition: $NEW_TASK_DEF"
+
+      # 🚀 Rolling deploy
+      - name: Rolling Deploy to ECS
+        run: |
+          aws ecs update-service \
+          --cluster $CLUSTER \
+          --service $SERVICE \
+          --task-definition $TASK_DEF_ARN
+
+          aws ecs wait services-stable \
+          --cluster $CLUSTER \
+          --services $SERVICE
+
+          echo "✅ Deploy completed"

@@ -4,10 +4,10 @@ name: Deploy
 on:
   push:
     branches:
-      - main
-      - prod
-      - stg_network_module
-      - stg_add_secret
+      - main1
+      - prod1
+      - stg_network_module1
+      - stg_add_secret1
 
 jobs:
   test-lint:
@@ -55,4 +55,4 @@ jobs:
           cd infra/infra
           docker compose run --rm terraform -chdir=deploy/ init -reconfigure
           docker compose run --rm terraform -chdir=deploy/ workspace select -or-create $workspace
-          docker compose run --rm terraform -chdir=deploy/ destroy -auto-approve
+          docker compose run --rm terraform -chdir=deploy/ apply -auto-approve
