@@ -5,8 +5,10 @@ name: Deploy
 on:
   push:
     branches:
-      - main
-      - prod
+      - main1
+      - prod1
+      - stg_network_module1
+      - stg_add_secret1
 
 jobs:
   test-lint:
@@ -15,7 +17,7 @@ jobs:
     secrets:
       DOCKERHUB_USER: ${{ vars.DOCKERHUB_USER }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-
+      
   deploy:
     name: Deploy
     runs-on: ubuntu-22.04

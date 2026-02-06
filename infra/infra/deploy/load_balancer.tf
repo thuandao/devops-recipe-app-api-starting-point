@@ -6,7 +6,7 @@
 resource "aws_security_group" "lb" {
   description = "Configure access for the Application Load Balancer"
   name        = "${local.prefix}-alb-access"
-  vpc_id      = aws_vpc.main.id
+  vpc_id      = module.vpc.vpc_id
 
   ingress {
     protocol    = "tcp"
@@ -33,15 +33,14 @@ resource "aws_security_group" "lb" {
 resource "aws_lb" "api" {
   name               = "${local.prefix}-lb"
   load_balancer_type = "application"
-  subnets            = [aws_subnet.public_a.id, aws_subnet.public_b.id]
+  subnets            = module.vpc.public_subnets
   security_groups    = [aws_security_group.lb.id]
 }
-
 
 resource "aws_lb_target_group" "api" {
   name        = "${local.prefix}-api"
   protocol    = "HTTP"
-  vpc_id      = aws_vpc.main.id
+  vpc_id      = module.vpc.vpc_id
   target_type = "ip"
   port        = 8000
 
@@ -67,12 +66,13 @@ resource "aws_lb_listener" "api" {
   }
 }
 
+
 resource "aws_lb_listener" "api_https" {
   load_balancer_arn = aws_lb.api.arn
   port              = 443
   protocol          = "HTTPS"
 
-  certificate_arn = aws_acm_certificate_validation.cert.certificate_arn
+  certificate_arn = module.acm.acm_certificate_arn
 
   default_action {
     type             = "forward"

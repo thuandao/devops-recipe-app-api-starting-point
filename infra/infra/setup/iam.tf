@@ -98,6 +98,12 @@ data "aws_iam_policy_document" "ec2" {
   statement {
     effect = "Allow"
     actions = [
+      "ec2:CreateNetworkAcl",
+      "ec2:DeleteNetworkAcl",
+      "ec2:CreateNetworkAclEntry",
+      "ec2:DeleteNetworkAclEntry",
+      "ec2:ReplaceNetworkAclEntry",
+      "ec2:DescribeNetworkAcls",
       "ec2:DescribeVpcs",
       "ec2:CreateTags",
       "ec2:CreateVpc",
@@ -139,20 +145,21 @@ data "aws_iam_policy_document" "ec2" {
       "ec2:CreateNetworkInterface",
       "ec2:DeleteNetworkInterface",
       "ec2:ModifyNetworkInterfaceAttribute",
-      # Required for EFS Mount Target / ENI read & refresh
       "ec2:DescribeNetworkInterfaceAttribute",
-      # Required when AWS auto-assigns private IPs (EFS, ALB, ECS)
       "ec2:AssignPrivateIpAddresses",
       "ec2:UnassignPrivateIpAddresses",
-      # Commonly required by Terraform VPC / ALB / EFS modules
       "ec2:DescribeAvailabilityZones",
-      # Sometimes required when ENI is attached/detached by services
       "ec2:AttachNetworkInterface",
       "ec2:DetachNetworkInterface",
       "ec2:RunInstances",
       "ec2:TerminateInstances",
       "ec2:CreateTags",
       "ec2:Describe*",
+      "ec2:CreateLaunchTemplate",
+      "ec2:CreateLaunchTemplateVersion",
+      "ec2:DescribeLaunchTemplates",
+      "ec2:DescribeLaunchTemplateVersions",
+      "ec2:DeleteLaunchTemplate",
     ]
     resources = ["*"]
   }
@@ -260,6 +267,8 @@ data "aws_iam_policy_document" "iam" {
       "iam:CreateRole",
       "iam:CreatePolicy",
       "iam:AttachRolePolicy",
+      "iam:CreatePolicyVersion",
+      "iam:DeletePolicyVersion",
       "iam:TagRole",
       "iam:TagPolicy",
       "iam:PassRole",
@@ -298,7 +307,9 @@ data "aws_iam_policy_document" "logs" {
       "logs:DescribeLogGroups",
       "logs:CreateLogGroup",
       "logs:TagResource",
-      "logs:ListTagsLogGroup"
+      "logs:ListTagsLogGroup",
+      "logs:ListTagsForResource",
+      "logs:UntagResource"
     ]
     resources = ["*"]
   }
@@ -324,6 +335,8 @@ data "aws_iam_policy_document" "elb" {
   statement {
     effect = "Allow"
     actions = [
+      "elasticloadbalancing:DescribeListenerAttributes",
+      "elasticloadbalancing:RemoveTags",
       "elasticloadbalancing:DeleteLoadBalancer",
       "elasticloadbalancing:DeleteTargetGroup",
       "elasticloadbalancing:DeleteListener",

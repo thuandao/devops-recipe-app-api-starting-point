@@ -55,33 +55,35 @@ resource "aws_ecs_task_definition" "api" {
 
     container_definitions = jsonencode(
     [
-         {
+      {
         name              = "api"
         image             = var.ecr_app_image
         essential         = true
         memoryReservation = 256
         user              = "django-user"
-        environment = [
+        secrets = [
           {
             name  = "DJANGO_SECRET_KEY"
-            value = var.django_secret_key
+            valueFrom = "${aws_secretsmanager_secret.db.arn}:django_secret_key::"
           },
           {
             name  = "DB_HOST"
-            value = aws_db_instance.main.address
+            valueFrom = "${aws_secretsmanager_secret.db.arn}:db_host::"
           },
           {
             name  = "DB_NAME"
-            value = aws_db_instance.main.db_name
+            valueFrom = "${aws_secretsmanager_secret.db.arn}:db_name::"
           },
           {
             name  = "DB_USER"
-            value = aws_db_instance.main.username
+            valueFrom = "${aws_secretsmanager_secret.db.arn}:username::"
           },
           {
             name  = "DB_PASS"
-            value = aws_db_instance.main.password
-          },
+            valueFrom = "${aws_secretsmanager_secret.db.arn}:password::"
+          }
+        ]
+        environment = [
           {
             name  = "ALLOWED_HOSTS"
             value = aws_route53_record.app.fqdn
@@ -103,7 +105,7 @@ resource "aws_ecs_task_definition" "api" {
           logDriver = "awslogs"
           options = {
             awslogs-group         = aws_cloudwatch_log_group.ecs_task_logs.name
-            awslogs-region        = data.aws_region.current.name
+            awslogs-region        = data.aws_region.current.region
             awslogs-stream-prefix = "api"
           }
         }
@@ -142,13 +144,19 @@ resource "aws_ecs_task_definition" "api" {
           logDriver = "awslogs"
           options = {
             awslogs-group         = aws_cloudwatch_log_group.ecs_task_logs.name
-            awslogs-region        = data.aws_region.current.name
+            awslogs-region        = data.aws_region.current.region
             awslogs-stream-prefix = "proxy"
           }
         }
       }
     ]
   )
+
+  lifecycle {
+    ignore_changes = [
+      container_definitions
+    ]
+  }
 
   volume {
     name = "static"
@@ -176,7 +184,7 @@ resource "aws_ecs_task_definition" "api" {
 resource "aws_security_group" "ecs_service" {
   description = "Access rules for the ECS service."
   name        = "${local.prefix}-ecs-service"
-  vpc_id      = aws_vpc.main.id
+  vpc_id      = module.vpc.vpc_id
 
   # Outbound access to endpoints
   egress {
@@ -191,10 +199,7 @@ resource "aws_security_group" "ecs_service" {
     from_port = 5432
     to_port   = 5432
     protocol  = "tcp"
-    cidr_blocks = [
-      aws_subnet.private_a.cidr_block,
-      aws_subnet.private_b.cidr_block,
-    ]
+    cidr_blocks = module.vpc.private_subnets_cidr_blocks
   }
 
   # NFS Port for EFS volumes
@@ -202,10 +207,7 @@ resource "aws_security_group" "ecs_service" {
     from_port = 2049
     to_port   = 2049
     protocol  = "tcp"
-    cidr_blocks = [
-      aws_subnet.private_a.cidr_block,
-      aws_subnet.private_b.cidr_block,
-    ]
+    cidr_blocks = module.vpc.private_subnets_cidr_blocks
   }
 
   # HTTP inbound access
@@ -228,14 +230,16 @@ resource "aws_ecs_service" "api" {
   platform_version       = "1.4.0"
   enable_execute_command = true
 
+  deployment_controller {
+    type = "ECS"
+  }
+
+  deployment_minimum_healthy_percent = 100
+  deployment_maximum_percent         = 200
+
   network_configuration {
     assign_public_ip = true
-
-    subnets = [
-      aws_subnet.private_a.id,
-      aws_subnet.private_b.id
-    ]
-
+    subnets = module.vpc.private_subnets
     security_groups = [aws_security_group.ecs_service.id]
   }
 
