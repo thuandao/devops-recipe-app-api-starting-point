@@ -11,3 +11,7 @@ output "ecs_service_name" {
   description = "Name of the ECS service"
   value = aws_ecs_service.api.name
 }
+
+output "ecs_task_family" {
+  value = aws_ecs_task_definition.api.family
+}

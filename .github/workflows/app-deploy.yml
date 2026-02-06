@@ -53,7 +53,7 @@ jobs:
       - name: Register new Task Definition revision
         run: |
           aws ecs describe-task-definition \
-            --task-definition my-task \
+            --task-definition $TASK_FAMILY \
             --query taskDefinition > task-def.json
 
           jq --arg IMG1 "$IMAGE_APP" --arg IMG2 "$IMAGE_PROXY" '
