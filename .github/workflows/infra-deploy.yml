@@ -5,9 +5,6 @@ on:
     branches:
       - staging
       - prod
-      - change_deploy_flows
-    paths:
-      - 'infra/**'
 
 jobs:
   test-lint:
