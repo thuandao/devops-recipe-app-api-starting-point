@@ -52,8 +52,12 @@ jobs:
       # 📦 Lấy task definition hiện tại & tạo revision mới
       - name: Register new Task Definition revision
         run: |
+          echo "$TASK_FAMILY"
+          echo "$CLUSTER"
+          echo "$SERVICE"
+          echo "IMAGE_PROXY=$IMAGE_PROXY" >> $GITHUB_ENV
           aws ecs describe-task-definition \
-            --task-definition my-task \
+            --task-definition $TASK_FAMILY \
             --query taskDefinition > task-def.json
 
           jq --arg IMG1 "$IMAGE_APP" --arg IMG2 "$IMAGE_PROXY" '
