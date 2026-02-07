@@ -51,7 +51,6 @@ resource "aws_iam_user_policy_attachment" "tf_backend" {
   policy_arn = aws_iam_policy.tf_backend.arn
 }
 
-
 #########################
 # Policy for ECR access #
 #########################
@@ -209,7 +208,6 @@ resource "aws_iam_user_policy_attachment" "rds" {
   policy_arn = aws_iam_policy.rds.arn
 }
 
-
 #########################
 # Policy for ECS access #
 #########################
@@ -315,7 +313,6 @@ data "aws_iam_policy_document" "logs" {
   }
 }
 
-
 resource "aws_iam_policy" "logs" {
   name        = "${aws_iam_user.cd.name}-logs"
   description = "Allow user to manage CloudWatch resources."
@@ -409,7 +406,6 @@ data "aws_iam_policy_document" "efs" {
   }
 }
 
-
 resource "aws_iam_policy" "efs" {
   name        = "${aws_iam_user.cd.name}-efs"
   description = "Allow user to manage EFS resources."
@@ -447,6 +443,7 @@ data "aws_iam_policy_document" "route53" {
     resources = ["*"]
   }
 }
+
 
 resource "aws_iam_policy" "route53" {
   name        = "${aws_iam_user.cd.name}-route53"
