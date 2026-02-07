@@ -52,12 +52,9 @@ jobs:
       # 📦 Lấy task definition hiện tại & tạo revision mới
       - name: Register new Task Definition revision
         run: |
-          echo "$TASK_FAMILY"
-          echo "$CLUSTER"
-          echo "$SERVICE"
           echo "IMAGE_PROXY=$IMAGE_PROXY" >> $GITHUB_ENV
           aws ecs describe-task-definition \
-            --task-definition $TASK_FAMILY \
+            --task-definition raa-staging-api \
             --query taskDefinition > task-def.json
 
           jq --arg IMG1 "$IMAGE_APP" --arg IMG2 "$IMAGE_PROXY" '
@@ -90,12 +87,12 @@ jobs:
       - name: Rolling Deploy to ECS
         run: |
           aws ecs update-service \
-          --cluster $CLUSTER \
-          --service $SERVICE \
+          --cluster raa-staging-cluster \
+          --service raa-staging-api \
           --task-definition $TASK_DEF_ARN
 
           aws ecs wait services-stable \
-          --cluster $CLUSTER \
-          --services $SERVICE
+          --cluster raa-staging-cluster \
+          --services raa-staging-api
 
           echo "✅ Deploy completed"
