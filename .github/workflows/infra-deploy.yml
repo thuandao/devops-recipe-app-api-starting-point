@@ -54,5 +54,7 @@ jobs:
           TASK_FAMILY=$(docker compose run --rm terraform -chdir=deploy output -raw ecs_task_family)
           CLUSTER=$(docker compose run --rm terraform -chdir=deploy output -raw ecs_cluster_name)
           SERVICE=$(docker compose run --rm terraform -chdir=deploy output -raw ecs_service_name)
+          
+          echo "TASK_FAMILY=$TASK_FAMILY" >> $GITHUB_ENV
           echo "CLUSTER=$CLUSTER" >> $GITHUB_ENV
           echo "SERVICE=$SERVICE" >> $GITHUB_ENV
