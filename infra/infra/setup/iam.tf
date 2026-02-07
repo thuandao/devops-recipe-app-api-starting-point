@@ -407,7 +407,6 @@ data "aws_iam_policy_document" "efs" {
   }
 }
 
-
 resource "aws_iam_policy" "efs" {
   name        = "${aws_iam_user.cd.name}-efs"
   description = "Allow user to manage EFS resources."
