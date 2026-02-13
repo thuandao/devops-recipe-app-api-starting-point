@@ -5,6 +5,7 @@ on:
     branches:
       - staging
       - prod
+      - blue-green-deploy
 
 jobs:
   test-lint:
