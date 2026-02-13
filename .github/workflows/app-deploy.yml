@@ -8,7 +8,7 @@ on:
         description: Which environment to deploy AWS resources for?
         options:
           - staging
-          - prod
+          - prod  
 
 jobs:
   deploy:

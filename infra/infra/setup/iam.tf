@@ -444,7 +444,6 @@ data "aws_iam_policy_document" "route53" {
   }
 }
 
-
 resource "aws_iam_policy" "route53" {
   name        = "${aws_iam_user.cd.name}-route53"
   description = "Allow user to manage Route53 resources."

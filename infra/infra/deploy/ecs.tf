@@ -231,7 +231,7 @@ resource "aws_ecs_service" "api" {
   enable_execute_command = true
 
   deployment_controller {
-    type = "ECS"
+    type = "CODE_DEPLOY"
   }
 
   deployment_minimum_healthy_percent = 100
@@ -247,6 +247,17 @@ resource "aws_ecs_service" "api" {
     target_group_arn = aws_lb_target_group.api.arn
     container_name   = "proxy"
     container_port   = 8000
+  }
+
+  # Ignore changes managed by CodeDeploy
+  lifecycle {
+    ignore_changes = [task_definition, load_balancer, desired_count]
+  }
+
+  depends_on = [aws_lb_listener.api_https]
+
+  tags = {
+    Name = "${local.prefix}-ecs-service"
   }
 }
 

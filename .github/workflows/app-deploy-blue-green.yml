@@ -1,0 +1,123 @@
+name: Deploy App (Blue/Green ECS)
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        description: Select environment
+        options:
+          - staging
+          - prod
+        required: true
+
+jobs:
+  deploy:
+    name: Build & BlueGreen Deploy
+    runs-on: ubuntu-22.04
+
+    env:
+      AWS_REGION: us-east-1
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 🔐 Configure AWS
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ vars.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # 🐳 Login ECR
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # 🎯 Set environment variables dynamically
+      - name: Set Environment Variables
+        run: |
+          if [ "${{ github.event.inputs.environment }}" = "prod" ]; then
+            echo "CLUSTER=raa-prod-cluster" >> $GITHUB_ENV
+            echo "SERVICE=raa-prod-api" >> $GITHUB_ENV
+            echo "CODEDEPLOY_APP=raa-codedeploy" >> $GITHUB_ENV
+            echo "CODEDEPLOY_GROUP=raa-prod-dg" >> $GITHUB_ENV
+          else
+            echo "CLUSTER=raa-staging-cluster" >> $GITHUB_ENV
+            echo "SERVICE=raa-staging-api" >> $GITHUB_ENV
+            echo "CODEDEPLOY_APP=raa-codedeploy" >> $GITHUB_ENV
+            echo "CODEDEPLOY_GROUP=raa-staging-dg" >> $GITHUB_ENV
+          fi
+
+      # 🏗 Build & Push images
+      - name: Build and Push Images
+        run: |
+          IMAGE_APP=${{ vars.ECR_REPO_APP }}:$GITHUB_SHA
+          IMAGE_PROXY=${{ vars.ECR_REPO_PROXY }}:$GITHUB_SHA
+
+          docker build -t $IMAGE_APP .
+          docker push $IMAGE_APP
+
+          docker build -t $IMAGE_PROXY proxy/
+          docker push $IMAGE_PROXY
+
+          echo "IMAGE_APP=$IMAGE_APP" >> $GITHUB_ENV
+          echo "IMAGE_PROXY=$IMAGE_PROXY" >> $GITHUB_ENV
+
+      # 📦 Register new Task Definition revision
+      - name: Register new Task Definition
+        run: |
+          aws ecs describe-task-definition \
+            --task-definition $SERVICE \
+            --query taskDefinition > task-def.json
+
+          jq --arg IMG1 "$IMAGE_APP" --arg IMG2 "$IMAGE_PROXY" '
+            .containerDefinitions |= map(
+              if .name=="api" then .image=$IMG1
+              elif .name=="proxy" then .image=$IMG2
+              else .
+              end
+            )
+            | del(
+                .taskDefinitionArn,
+                .revision,
+                .status,
+                .requiresAttributes,
+                .compatibilities,
+                .registeredAt,
+                .registeredBy
+              )
+          ' task-def.json > new-task-def.json
+
+          NEW_TASK_DEF=$(aws ecs register-task-definition \
+            --cli-input-json file://new-task-def.json \
+            --query "taskDefinition.taskDefinitionArn" \
+            --output text)
+
+          echo "TASK_DEF_ARN=$NEW_TASK_DEF" >> $GITHUB_ENV
+          echo "New task definition: $NEW_TASK_DEF"
+
+      # 📄 Generate AppSpec from template
+      - name: Generate AppSpec
+        run: |
+          sed "s|__TASK_DEFINITION__|$TASK_DEF_ARN|g" \
+          /infra/infra/deploy/templates/codedeploy/appspec.json.tpl > appspec.json
+
+      # 🚀 Trigger CodeDeploy Blue/Green
+      - name: Create Deployment
+        run: |
+          DEPLOYMENT_ID=$(aws deploy create-deployment \
+            --application-name $CODEDEPLOY_APP \
+            --deployment-group-name $CODEDEPLOY_GROUP \
+            --deployment-config-name CodeDeployDefault.ECSAllAtOnce \
+            --revision revisionType=AppSpecContent,appSpecContent="{\"content\":\"$(cat appspec.json | sed 's/\"/\\\\\"/g')\"}" \
+            --query "deploymentId" \
+            --output text)
+
+          echo "Deployment ID: $DEPLOYMENT_ID"
+
+          aws deploy wait deployment-successful \
+            --deployment-id $DEPLOYMENT_ID
+
+          echo "✅ Blue/Green deployment successful"
