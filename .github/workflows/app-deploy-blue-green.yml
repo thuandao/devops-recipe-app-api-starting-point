@@ -103,18 +103,22 @@ jobs:
         run: |
           sed "s|__TASK_DEFINITION__|$TASK_DEF_ARN|g" \
           infra/infra/deploy/templates/codedeploy/appspec.json.tpl > appspec.json
-
+          
       # 🚀 Trigger CodeDeploy Blue/Green
       - name: Create Deployment
         run: |
+          CONTENT=$(jq -Rs . < appspec.json)
+
           DEPLOYMENT_ID=$(aws deploy create-deployment \
             --application-name $CODEDEPLOY_APP \
             --deployment-group-name $CODEDEPLOY_GROUP \
             --deployment-config-name CodeDeployDefault.ECSAllAtOnce \
-            --revision revisionType=AppSpecContent,appSpecContent="{\"content\":\"$(cat appspec.json | sed 's/\"/\\\\\"/g')\"}" \
+            --revision "revisionType=AppSpecContent,appSpecContent={content=$CONTENT}" \
             --query "deploymentId" \
             --output text)
 
+          echo "DEPLOYMENT_ID=$DEPLOYMENT_ID" >> $GITHUB_ENV
+          
           echo "Deployment ID: $DEPLOYMENT_ID"
 
           aws deploy wait deployment-successful \
