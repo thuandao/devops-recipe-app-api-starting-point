@@ -107,14 +107,29 @@ jobs:
       # 🚀 Trigger CodeDeploy Blue/Green
       - name: Create Deployment
         run: |
+          # Convert appspec.json to JSON
           CONTENT=$(jq -Rs . < appspec.json)
 
+          # Tạo revision.json chuẩn format AWS yêu cầu
+          cat > revision.json <<EOF
+          {
+            "revisionType": "AppSpecContent",
+            "appSpecContent": {
+              "content": $CONTENT
+            }
+          }
+          EOF
+
+          echo "===== REVISION FILE ====="
+          cat revision.json | jq .
+
+          # Gọi deploy bằng file://
           DEPLOYMENT_ID=$(aws deploy create-deployment \
             --application-name $CODEDEPLOY_APP \
             --deployment-group-name $CODEDEPLOY_GROUP \
             --deployment-config-name CodeDeployDefault.ECSAllAtOnce \
-            --revision "revisionType=AppSpecContent,appSpecContent={\"content\":$CONTENT}" \
-            --query "deploymentId" \
+            --revision file://revision.json \
+            --query deploymentId \
             --output text)
 
           echo "DEPLOYMENT_ID=$DEPLOYMENT_ID" >> $GITHUB_ENV
