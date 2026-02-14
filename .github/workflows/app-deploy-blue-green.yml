@@ -102,7 +102,7 @@ jobs:
       - name: Generate AppSpec
         run: |
           sed "s|__TASK_DEFINITION__|$TASK_DEF_ARN|g" \
-          /infra/infra/deploy/templates/codedeploy/appspec.json.tpl > appspec.json
+          infra/infra/deploy/templates/codedeploy/appspec.json.tpl > appspec.json
 
       # 🚀 Trigger CodeDeploy Blue/Green
       - name: Create Deployment
