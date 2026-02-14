@@ -46,8 +46,8 @@ jobs:
           else
             echo "CLUSTER=raa-staging-cluster" >> $GITHUB_ENV
             echo "SERVICE=raa-staging-api" >> $GITHUB_ENV
-            echo "CODEDEPLOY_APP=raa-codedeploy" >> $GITHUB_ENV
-            echo "CODEDEPLOY_GROUP=raa-staging-dg" >> $GITHUB_ENV
+            echo "CODEDEPLOY_APP=raa-staging-app" >> $GITHUB_ENV
+            echo "CODEDEPLOY_GROUP=raa-staging-deployment-group" >> $GITHUB_ENV
           fi
 
       # 🏗 Build & Push images
