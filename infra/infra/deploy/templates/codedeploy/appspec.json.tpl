@@ -7,7 +7,7 @@
         "Properties": {
           "TaskDefinition": "__TASK_DEFINITION__",
           "LoadBalancerInfo": {
-            "ContainerName": "api",
+            "ContainerName": "proxy",
             "ContainerPort": 8000
           }
         }
