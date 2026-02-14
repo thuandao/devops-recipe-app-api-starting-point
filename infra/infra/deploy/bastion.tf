@@ -40,7 +40,6 @@ resource "aws_launch_template" "bastion" {
   network_interfaces {
     associate_public_ip_address = true
     security_groups             = [aws_security_group.bastion.id]
-    subnet_id                   = module.vpc.public_subnets[0]
   }
 
   user_data = base64encode(
