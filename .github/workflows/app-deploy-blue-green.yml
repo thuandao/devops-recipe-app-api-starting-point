@@ -113,7 +113,7 @@ jobs:
             --application-name $CODEDEPLOY_APP \
             --deployment-group-name $CODEDEPLOY_GROUP \
             --deployment-config-name CodeDeployDefault.ECSAllAtOnce \
-            --revision "revisionType=AppSpecContent,appSpecContent={content=$CONTENT}" \
+            --revision "revisionType=AppSpecContent,appSpecContent={\"content\":$CONTENT}" \
             --query "deploymentId" \
             --output text)
 
